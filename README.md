@@ -1,5 +1,4 @@
 # ticket-comparison
-# Train Ticket Price Checker
 
 A simple frontend application to look up train schedules between stations and instantly find the cheapest available ticket option. Built with raw HTML, CSS, and vanilla JavaScript.
 
