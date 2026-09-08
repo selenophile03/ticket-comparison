@@ -1,172 +1,131 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Train Fare Finder & Comparison Tool</title>
-    <!-- Tailwind CSS for modern styling -->
-    <script src="https://tailwindcss.com"></script>
+    <title>Train Ticket Booking System - Price Checker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            background: #fff;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            display: inline-block;
+            margin-right: 20px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        select, button {
+            padding: 8px;
+            width: 200px;
+        }
+        button {
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            cursor: pointer;
+            width: 150px;
+        }
+        button:hover {
+            background-color: #004494;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .cheapest-row {
+            background-color: #d4edda !important;
+            font-weight: bold;
+            color: #155724;
+        }
+        #alert-box {
+            padding: 15px;
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            margin-top: 15px;
+            display: none;
+        }
+        #error-box {
+            padding: 15px;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            margin-top: 15px;
+            display: none;
+        }
+    </style>
 </head>
-<body class="bg-gray-50 font-sans min-h-screen flex flex-col justify-between">
+<body>
 
-    <!-- Main Content Container -->
-    <main class="max-w-4xl w-full mx-auto p-4 my-8">
-        <header class="text-center mb-8">
-            <h1 class="text-3xl font-extrabold text-blue-700 tracking-tight sm:text-4xl">
-                🚄 Train Ticket Price Finder
-            </h1>
-            <p class="text-gray-500 mt-2">Find the absolute cheapest train routes between destinations instantly.</p>
-        </header>
+<div class="container">
+    <h2>Train Ticket Price Checker & Comparison</h2>
+    <hr>
+    
+    <form id="ticketForm">
+        <div class="form-group">
+            <label>From Station:</label>
+            <select id="origin" required>
+                <option value="">--Select Origin--</option>
+                <option value="London">London</option>
+                <option value="Manchester">Manchester</option>
+                <option value="Birmingham">Birmingham</option>
+                <option value="Liverpool">Liverpool</option>
+            </select>
+        </div>
 
-        <!-- Search Form Card -->
-        <section class="bg-white p-6 rounded-xl shadow-md mb-8">
-            <form id="searchForm" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-                <div>
-                    <label for="startPoint" class="block text-sm font-semibold text-gray-700 mb-1">From (Start Point)</label>
-                    <select id="startPoint" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
-                        <option value="" disabled selected>Select station...</option>
-                        <option value="New York">New York</option>
-                        <option value="Boston">Boston</option>
-                        <option value="Washington DC">Washington DC</option>
-                        <option value="Philadelphia">Philadelphia</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="destination" class="block text-sm font-semibold text-gray-700 mb-1">To (Destination)</label>
-                    <select id="destination" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
-                        <option value="" disabled selected>Select station...</option>
-                        <option value="New York">New York</option>
-                        <option value="Boston">Boston</option>
-                        <option value="Washington DC">Washington DC</option>
-                        <option value="Philadelphia">Philadelphia</option>
-                    </select>
-                </div>
-                <div>
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium p-2.5 rounded-lg transition-colors shadow">
-                        Compare Prices
-                    </button>
-                </div>
-            </form>
-        </section>
+        <div class="form-group">
+            <label>To Station:</label>
+            <select id="destination" required>
+                <option value="">--Select Destination--</option>
+                <option value="London">London</option>
+                <option value="Manchester">Manchester</option>
+                <option value="Birmingham">Birmingham</option>
+                <option value="Liverpool">Liverpool</option>
+            </select>
+        </div>
 
-        <!-- Results Display Panel -->
-        <section id="resultsSection" class="hidden">
-            <div id="cheapestBanner" class="mb-4 p-4 bg-green-50 border border-green-200 rounded-xl flex items-center space-x-3">
-                <span class="text-2xl">💡</span>
-                <div>
-                    <h3 class="font-bold text-green-800">Cheapest Train Found!</h3>
-                    <p id="cheapestDetails" class="text-sm text-green-700"></p>
-                </div>
-            </div>
+        <div class="form-group">
+            <button type="submit">Check Prices</button>
+        </div>
+    </form>
 
-            <div class="bg-white rounded-xl shadow-md overflow-hidden">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-gray-100 text-gray-700 border-b border-gray-200 text-sm font-semibold uppercase">
-                            <th class="p-4">Train Name / Type</th>
-                            <th class="p-4">Route</th>
-                            <th class="p-4">Duration</th>
-                            <th class="p-4">Ticket Price</th>
-                        </tr>
-                    </thead>
-                    <tbody id="ticketsTableBody" class="divide-y divide-gray-100 text-gray-600">
-                        <!-- Data injected dynamically via JavaScript -->
-                    </tbody>
-                </table>
-            </div>
-        </section>
+    <div id="alert-box"></div>
+    <div id="error-box"></div>
 
-        <!-- Error Handling State -->
-        <section id="errorSection" class="hidden p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl text-center">
-            ❌ No trains available for the selected route. Try changing your starting point or destination.
-        </section>
-    </main>
+    <table id="resultsTable" style="display: none;">
+        <thead>
+            <tr>
+                <th>Train / Service Operator</th>
+                <th>Route</th>
+                <th>Travel Time</th>
+                <th>Price (USD)</th>
+            </tr>
+        </thead>
+        <tbody id="tableData">
+            <!-- JS dynamic loop rows -->
+        </tbody>
+    </table>
+</div>
 
-    <!-- Footer -->
-    <footer class="text-center p-4 text-xs text-gray-400 bg-white border-t border-gray-100">
-        Train Fare Checker App &copy; 2026. Free Open Source Deployment.
-    </footer>
-
-    <!-- JavaScript Data Logic Engine -->
-    <script>
-        // Mock Database of train tickets (easily expandable or replaceable with real API fetches)
-        const trainTicketsDatabase = [
-            { id: 1, name: "Express Liner", from: "New York", to: "Boston", duration: "3h 45m", price: 45.00 },
-            { id: 2, name: "Amtrak Regional", from: "New York", to: "Boston", duration: "4h 15m", price: 32.00 },
-            { id: 3, name: "Bullet Commuter", from: "New York", to: "Boston", duration: "2h 30m", price: 85.00 },
-            
-            { id: 4, name: "Coast Intercity", from: "Boston", to: "New York", duration: "4h 00m", price: 29.99 },
-            { id: 5, name: "Acela Express", from: "Boston", to: "New York", duration: "2h 45m", price: 90.00 },
-
-            { id: 6, name: "Capital Rapid", from: "New York", to: "Washington DC", duration: "3h 10m", price: 55.00 },
-            { id: 7, name: "Metro Saver", from: "New York", to: "Washington DC", duration: "3h 55m", price: 39.00 },
-
-            { id: 8, name: "Keystone Commuter", from: "Philadelphia", to: "New York", duration: "1h 30m", price: 18.50 },
-            { id: 9, name: "Philly Express", from: "Philadelphia", to: "New York", duration: "1h 10m", price: 35.00 },
-            
-            { id: 10, name: "Atlantic Voyager", from: "Washington DC", to: "Boston", duration: "7h 20m", price: 64.00 }
-        ];
-
-        document.getElementById('searchForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const start = document.getElementById('startPoint').value;
-            const dest = document.getElementById('destination').value;
-            
-            const resultsSection = document.getElementById('resultsSection');
-            const errorSection = document.getElementById('errorSection');
-            const tableBody = document.getElementById('ticketsTableBody');
-            
-            // Clean up state
-            resultsSection.classList.add('hidden');
-            errorSection.classList.add('hidden');
-            tableBody.innerHTML = '';
-
-            if (start === dest) {
-                alert("Start point and destination cannot be the same!");
-                return;
-            }
-
-            // Filter available trains matching the route criteria
-            const matchedTrains = trainTicketsDatabase.filter(
-                train => train.from === start && train.to === dest
-            );
-
-            if (matchedTrains.length === 0) {
-                errorSection.classList.remove('hidden');
-                return;
-            }
-
-            // Sort list ascending to determine the absolute cheapest ticket price
-            matchedTrains.sort((a, b) => a.price - b.price);
-            const cheapestTrain = matchedTrains[0];
-
-            // Injects highlighted banner details for the consumer
-            document.getElementById('cheapestDetails').innerText = 
-                `${cheapestTrain.name} is the most affordable choice at only $${cheapestTrain.price.toFixed(2)}, taking roughly ${cheapestTrain.duration}.`;
-
-            // Populate all matching data rows inside the comparison grid matrix
-            matchedTrains.forEach((train, index) => {
-                const row = document.createElement('tr');
-                // Apply a highlighted styling treatment to row 0 (cheapest)
-                if(index === 0) {
-                    row.className = "bg-green-50 font-medium text-gray-900";
-                }
-                
-                row.innerHTML = `
-                    <td class="p-4 flex flex-col">
-                        <span>${train.name}</span>
-                        ${index === 0 ? '<span class="text-xs text-green-600 font-bold uppercase tracking-wide">🏆 Top Value</span>' : ''}
-                    </td>
-                    <td class="p-4 text-sm">${train.from} ➔ ${train.to}</td>
-                    <td class="p-4 text-sm">${train.duration}</td>
-                    <td class="p-4 text-base font-semibold ${index === 0 ? 'text-green-700' : 'text-gray-900'}">$${train.price.toFixed(2)}</td>
-                `;
-                tableBody.appendChild(row);
-            });
-
-            resultsSection.classList.remove('hidden');
-        });
-    </script>
+<script src="script.js"></script>
 </body>
 </html>
