@@ -1,4 +1,3 @@
-// Hardcoded Local Database Grid Arrays
 var trainDatabase = [
     { name: "National Rail Express", from: "London", to: "Manchester", time: "2h 15m", cost: 42.50 },
     { name: "Virgin Intercity", from: "London", to: "Manchester", time: "2h 45m", cost: 28.00 },
@@ -14,7 +13,6 @@ var trainDatabase = [
     { name: "TransPennine Express", from: "Liverpool", to: "Manchester", time: "0h 35m", cost: 14.00 }
 ];
 
-// Event Handling Hook
 document.getElementById("ticketForm").addEventListener("submit", function(event) {
     event.preventDefault();
 
@@ -26,19 +24,16 @@ document.getElementById("ticketForm").addEventListener("submit", function(event)
     var table = document.getElementById("resultsTable");
     var tbody = document.getElementById("tableData");
 
-    // Reset layout visibility structures
     alertBox.style.display = "none";
     errorBox.style.display = "none";
     table.style.display = "none";
     tbody.innerHTML = "";
 
-    // Validation matching checks
     if (fromStation === toStation) {
         alert("Error: Origin and Destination can't match.");
         return;
     }
 
-    // Filter loops array records match
     var matches = [];
     for (var i = 0; i < trainDatabase.length; i++) {
         if (trainDatabase[i].from === fromStation && trainDatabase[i].to === toStation) {
@@ -46,14 +41,12 @@ document.getElementById("ticketForm").addEventListener("submit", function(event)
         }
     }
 
-    // Checking if route length exist
     if (matches.length === 0) {
         errorBox.innerText = "No routes found for the selected stations.";
         errorBox.style.display = "block";
         return;
     }
 
-    // Standard JavaScript Bubble sort loop logic to find absolute cheapest item
     for (var x = 0; x < matches.length; x++) {
         for (var y = 0; y < matches.length - 1; y++) {
             if (matches[y].cost > matches[y + 1].cost) {
@@ -64,16 +57,13 @@ document.getElementById("ticketForm").addEventListener("submit", function(event)
         }
     }
 
-    // The first item in sorted array index is the cheapest value match
     var absoluteCheapest = matches[0];
     alertBox.innerHTML = "<b>Cheapest Choice:</b> " + absoluteCheapest.name + " ($" + absoluteCheapest.cost.toFixed(2) + ")";
     alertBox.style.display = "block";
 
-    // Populate rows output manually
     for (var k = 0; k < matches.length; k++) {
         var row = document.createElement("tr");
         
-        // Highlight first item row explicitly
         if (k === 0) {
             row.className = "cheapest-row";
         }
